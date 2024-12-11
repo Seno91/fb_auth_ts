@@ -1,4 +1,5 @@
 import 'package:fb_auth_ts/firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -26,21 +27,47 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   String _message = "";
 
-  void _loginUser() {
-    const username = "Senad";
-    //const password = "Hallo";
+  final String userEmail = "dude@dude.com";
+  final String userPw = "dudedudedude";
 
-    setState(() {
-      _message = "User '$username' is Loged in";
-    });
+  //final TextEditingController _emailController = TextEditingController();
+  //final TextEditingController _pwController = TextEditingController();
+
+  Future<void> _loginUser() async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: userEmail, password: userPw);
+
+      setState(() {
+        _message = "User '${userCredential.user?.email}' is Loged in";
+      });
+    } catch (e) {
+      print(e);
+      setState(
+        () {
+          _message = "Nice try moron: ${e.toString()}}";
+        },
+      );
+    }
   }
 
-  void _logout() {
-    setState(() {
-      _message = "User succesfully loged out";
-    });
+  Future<void> _logout() async {
+    try {
+      await _auth.signOut();
+
+      setState(() {
+        _message = "User not found brahh";
+      });
+    } catch (e) {
+      setState(
+        () {
+          _message = "Nice try moron: ${e.toString()}}";
+        },
+      );
+    }
   }
 
   @override
@@ -60,13 +87,27 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            //Text("MailDUDE: $userEmail"),
+            //Text("PasswordDUDE: $userPw"),
+            TextField(
+              controller: TextEditingController(text: _message),
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(), labelText: "MailDUDE"),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: TextEditingController(text: _message),
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(), labelText: "PasswordDUDE"),
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
             TextField(
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
               controller: TextEditingController(text: _message),
             ),
-            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loginUser,
               child: const Text("Log TF in"),
