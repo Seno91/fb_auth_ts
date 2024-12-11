@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _loginUser() {
     const username = "Senad";
-    const password = "Hallo";
+    //const password = "Hallo";
 
     setState(() {
       _message = "User '$username' is Loged in";
